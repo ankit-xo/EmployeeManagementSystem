@@ -5,7 +5,6 @@ A Java Swing desktop application for managing employee records with CSV-based pe
 ## Features
 
 - Full-screen desktop UI on launch
-- Curved, modern form/table UI
 - Add, update, delete, and view employee by ID
 - Search employee directory by:
   - Name
