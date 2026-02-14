@@ -1,0 +1,13 @@
+Java: JDK 11+
+
+Bundled dependencies (lib/):
+- commons-codec 1.15
+- commons-collections4 4.4
+- commons-compress 1.21
+- commons-io 2.11.0
+- log4j-api 2.20.0
+- log4j-core 2.20.0
+- poi 5.2.3
+- poi-ooxml 5.2.3
+- xmlbeans 5.1.1
+- xmlgraphics-commons 2.9

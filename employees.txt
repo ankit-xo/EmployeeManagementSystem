@@ -1,3 +1,0 @@
-1,Ankit,BCA
-2,Anubhav,BCA
-3,ayush,bsc

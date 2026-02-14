@@ -1,61 +1,86 @@
 # Employee Management System
 
-A simple **Java-based Employee Management System** to manage employee records, generate reports, and store data in a text file.
+A Java Swing desktop application for managing employee records with CSV-based persistence.
 
-## 📂 Project Structure
-```
-EmployeeManagementSystem/
- ├── employees.txt              # Stores employee records
- ├── src/com/employee/
- │   ├── Employee.java          # Model class for employee
- │   ├── EmployeeDatabase.java  # Handles employee storage and retrieval
- │   ├── EmployeeManagement.java# Main class with menu-driven program
- │   └── ReportGenerator.java   # Generates employee reports
-```
+## Features
 
-## 🚀 Features
-- Add new employees  
-- View employee details  
-- Update employee records  
-- Delete employee records  
-- Generate reports  
-- Store data persistently in `employees.txt`
+- Full-screen desktop UI on launch
+- Curved, modern form/table UI
+- Add, update, delete, and view employee by ID
+- Search employee directory by:
+  - Name
+  - ID
+  - Department
+  - Position
+- Input validation:
+  - Required fields
+  - Email format
+  - 10-digit contact number
+- Duplicate employee ID prevention
+- CSV duplicate-ID cleanup while loading existing data
+- Auto-save employee data to `EmployeeData/employees.csv`
 
-## 🛠️ Technologies Used
-- **Java (JDK 8+)**  
-- **File Handling** for persistent storage  
+## Project Structure
 
-## ▶️ How to Run
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/EmployeeManagementSystem.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd EmployeeManagementSystem/EmployeeManagementSystem/src
-   ```
-3. Compile the project:
-   ```bash
-   javac com/employee/*.java
-   ```
-4. Run the program:
-   ```bash
-   java com.employee.EmployeeManagement
-   ```
-
-## 📖 Example
-```
-===== Employee Management System =====
-1. Add Employee
-2. View Employees
-3. Update Employee
-4. Delete Employee
-5. Generate Report
-6. Exit
-Enter your choice:
+```text
+src/main/java/com/employee/EmployeeFrontendUI.java
+src/main/java/com/employee/EmployeeDatabase.java
+src/main/java/com/employee/Employee.java
+src/test/java/com/employee/CSVTest.java
+run.sh
+requirements.txt
+EmployeeData/employees.csv
 ```
 
-## 📌 Future Enhancements
-- Switch to database (MySQL/SQLite) instead of text file  
-- Add GUI (JavaFX / Swing)  
-- Export reports in PDF/Excel  
+## Run
+
+### One-line command
+
+```bash
+cd "/Users/ankit/Documents/Coding Project/EmployeeManagementSystem" && chmod +x run.sh && ./run.sh
+```
+
+### Standard run
+
+```bash
+chmod +x run.sh
+./run.sh
+```
+
+`run.sh` does:
+1. Compile all Java sources from `src/main/java`
+2. Start GUI main class: `com.employee.EmployeeFrontendUI`
+3. If GUI is unavailable (headless environment), run `CSVTest` fallback
+
+## Manual Compile and Run
+
+```bash
+mkdir -p build/classes
+javac -cp "lib/*" -d build/classes $(find src/main/java -name "*.java")
+java -cp "build/classes:lib/*" com.employee.EmployeeFrontendUI
+```
+
+## How to Use
+
+1. Open **Employee Form** tab.
+2. Enter employee details.
+3. Use actions:
+   - **Add**
+   - **Update**
+   - **Delete**
+   - **View**
+   - **Clear**
+4. Open **Employee Directory** tab to search/filter records.
+
+## Data File
+
+- All records are stored in: `EmployeeData/employees.csv`
+
+## Requirements
+
+- Java JDK 11 or higher
+- Shell: `bash` or `zsh`
+- Dependencies are already included in `lib/`
+
+Note: This is **not** a Python project. `requirements.txt` is informational, not for `pip install`.
+
