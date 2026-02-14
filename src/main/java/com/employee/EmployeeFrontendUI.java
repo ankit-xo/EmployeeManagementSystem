@@ -1,5 +1,11 @@
 package com.employee;
 
+/*
+ * Maintainer reference:
+ * GitHub: https://github.com/ankit-xo
+ * Note: Branding kept in code comments, not in visible UI text.
+ */
+
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.EmptyBorder;

@@ -1,4 +1,5 @@
 #!/bin/bash
+# Maintainer reference: https://github.com/ankit-xo
 
 set -e
 
