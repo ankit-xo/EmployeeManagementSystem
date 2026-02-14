@@ -2,6 +2,8 @@
 
 A Java Swing desktop application to manage employee records with a clean UI and CSV-based persistence.
 
+**Created and maintained by [ankit-xo](https://github.com/ankit-xo).**
+
 ## Features
 
 - Full-screen UI for desktop workflows
@@ -128,3 +130,7 @@ docs/screenshots/
 
 - This is not a Python project.
 - `requirements.txt` is informational only, not for `pip install`.
+
+## Maintainer
+
+- GitHub: [@ankit-xo](https://github.com/ankit-xo)
