@@ -2,7 +2,7 @@
 
 A Java Swing desktop application to manage employee records with a clean UI and CSV-based persistence.
 
-**Created and maintained by [ankit-xo](https://github.com/ankit-xo).**
+**Created and maintained by GitHub: [ankit-xo](https://github.com/ankit-xo).**
 
 ## Features
 
