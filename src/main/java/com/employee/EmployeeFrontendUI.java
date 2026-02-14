@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class EmployeeFrontendUI extends JFrame {
@@ -57,6 +59,7 @@ public class EmployeeFrontendUI extends JFrame {
     private JTextField addressField;
     private JTextField searchField;
     private JLabel statusLabel;
+    private JLabel formMessageLabel;
     private JComboBox<String> departmentCombo;
     private JComboBox<String> searchFilterCombo;
     private JTabbedPane tabbedPane;
@@ -241,10 +244,23 @@ public class EmployeeFrontendUI extends JFrame {
         buttonPanel.add(viewButton);
 
         JButton clearButton = createModernButton("Clear", IOS_GRAY, IOS_GRAY_HOVER);
-        clearButton.addActionListener(e -> clearFields());
+        clearButton.addActionListener(e -> {
+            clearFields();
+            clearFormMessage();
+        });
         buttonPanel.add(clearButton);
 
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        formMessageLabel = new JLabel(" ");
+        formMessageLabel.setFont(uiFont(Font.PLAIN, 12));
+        formMessageLabel.setForeground(IOS_MUTED_TEXT);
+        formMessageLabel.setBorder(new EmptyBorder(0, 8, 4, 8));
+
+        JPanel footerPanel = new JPanel(new BorderLayout(0, 4));
+        footerPanel.setBackground(IOS_BG);
+        footerPanel.add(formMessageLabel, BorderLayout.NORTH);
+        footerPanel.add(buttonPanel, BorderLayout.CENTER);
+
+        mainPanel.add(footerPanel, BorderLayout.SOUTH);
 
         return mainPanel;
     }
@@ -353,6 +369,7 @@ public class EmployeeFrontendUI extends JFrame {
 
         employeeTable = new JTable(tableModel);
         configureTable(employeeTable);
+        attachTableRowAutoFill();
 
         JScrollPane scrollPane = new JScrollPane(employeeTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -617,6 +634,29 @@ public class EmployeeFrontendUI extends JFrame {
         }
     }
 
+    private void showFormError(String message) {
+        showFormMessage(message, IOS_RED);
+    }
+
+    private void showFormSuccess(String message) {
+        showFormMessage(message, IOS_GREEN);
+    }
+
+    private void clearFormMessage() {
+        if (formMessageLabel != null) {
+            formMessageLabel.setText(" ");
+            formMessageLabel.setForeground(IOS_MUTED_TEXT);
+        }
+    }
+
+    private void showFormMessage(String message, Color color) {
+        if (formMessageLabel != null) {
+            formMessageLabel.setText(message);
+            formMessageLabel.setForeground(color);
+        }
+        updateStatus(message);
+    }
+
     private class SearchKeyListener implements KeyListener {
         @Override
         public void keyTyped(KeyEvent e) {
@@ -726,17 +766,17 @@ public class EmployeeFrontendUI extends JFrame {
                 String address = addressField.getText().trim();
 
                 if (name.isEmpty() || idStr.isEmpty() || position.isEmpty() || contact.isEmpty() || email.isEmpty() || address.isEmpty()) {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Please fill all fields.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+                    showFormError("Please fill all fields.");
                     return;
                 }
 
                 if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Please enter a valid email address.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+                    showFormError("Please enter a valid email address.");
                     return;
                 }
 
                 if (!contact.matches("^\\d{10}$")) {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Contact must be a 10-digit number.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+                    showFormError("Contact must be a 10-digit number.");
                     return;
                 }
 
@@ -744,16 +784,16 @@ public class EmployeeFrontendUI extends JFrame {
 
                 boolean added = database.addEmployee(new Employee(name, id, department, position, contact, email, address));
                 if (!added) {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Employee ID already exists.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+                    showFormError("Employee ID already exists.");
                     return;
                 }
 
-                updateStatus("Employee added successfully. Enter details for next employee.");
+                showFormSuccess("Employee added successfully. Enter details for next employee.");
                 clearFields();
                 loadAllEmployees();
                 focusOnFirstField();
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Please enter a valid ID (number).", "Error", JOptionPane.ERROR_MESSAGE);
+                showFormError("Please enter a valid ID (number).");
             }
         }
     }
@@ -771,17 +811,17 @@ public class EmployeeFrontendUI extends JFrame {
                 String newAddress = addressField.getText().trim();
 
                 if (idStr.isEmpty() || newName.isEmpty() || newPosition.isEmpty() || newContact.isEmpty() || newEmail.isEmpty() || newAddress.isEmpty()) {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Please fill all fields.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+                    showFormError("Please fill all fields.");
                     return;
                 }
 
                 if (!newEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Please enter a valid email address.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+                    showFormError("Please enter a valid email address.");
                     return;
                 }
 
                 if (!newContact.matches("^\\d{10}$")) {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Contact must be a 10-digit number.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+                    showFormError("Contact must be a 10-digit number.");
                     return;
                 }
 
@@ -789,16 +829,15 @@ public class EmployeeFrontendUI extends JFrame {
 
                 boolean updated = database.updateEmployee(id, new Employee(newName, id, newDepartment, newPosition, newContact, newEmail, newAddress));
                 if (!updated) {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Employee not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                    showFormError("Employee not found.");
                     return;
                 }
 
-                updateStatus("Employee updated successfully");
-                JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Employee updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                showFormSuccess("Employee updated successfully.");
                 clearFields();
                 loadAllEmployees();
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Please enter a valid ID (number).", "Error", JOptionPane.ERROR_MESSAGE);
+                showFormError("Please enter a valid ID (number).");
             }
         }
     }
@@ -809,7 +848,7 @@ public class EmployeeFrontendUI extends JFrame {
             try {
                 String idStr = idField.getText().trim();
                 if (idStr.isEmpty()) {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Please enter an employee ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                    showFormError("Please enter an employee ID.");
                     return;
                 }
 
@@ -823,16 +862,15 @@ public class EmployeeFrontendUI extends JFrame {
 
                 if (confirm == JOptionPane.YES_OPTION) {
                     if (database.deleteEmployee(id)) {
-                        updateStatus("Employee deleted successfully");
-                        JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Employee deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        showFormSuccess("Employee deleted successfully.");
                         clearFields();
                         loadAllEmployees();
                     } else {
-                        JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Employee not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                        showFormError("Employee not found.");
                     }
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Please enter a valid ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                showFormError("Please enter a valid ID.");
             }
         }
     }
@@ -843,7 +881,7 @@ public class EmployeeFrontendUI extends JFrame {
             try {
                 String idStr = idField.getText().trim();
                 if (idStr.isEmpty()) {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Please enter an employee ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                    showFormError("Please enter an employee ID.");
                     return;
                 }
 
@@ -855,13 +893,12 @@ public class EmployeeFrontendUI extends JFrame {
                     loadAllEmployees();
                     selectEmployeeRowById(emp.getId());
                     tabbedPane.setSelectedIndex(0);
-                    updateStatus("Employee loaded: " + emp.getName());
+                    showFormSuccess("Employee loaded: " + emp.getName());
                 } else {
-                    JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Employee not found.", "Error", JOptionPane.ERROR_MESSAGE);
-                    updateStatus("Employee not found");
+                    showFormError("Employee not found.");
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(EmployeeFrontendUI.this, "Please enter a valid ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                showFormError("Please enter a valid ID.");
             }
         }
     }
@@ -913,6 +950,34 @@ public class EmployeeFrontendUI extends JFrame {
                 return;
             }
         }
+    }
+
+    private void attachTableRowAutoFill() {
+        employeeTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int viewRow = employeeTable.rowAtPoint(e.getPoint());
+                if (viewRow < 0) {
+                    return;
+                }
+                int modelRow = employeeTable.convertRowIndexToModel(viewRow);
+                Object idValue = tableModel.getValueAt(modelRow, 0);
+                if (idValue == null) {
+                    return;
+                }
+                try {
+                    int id = Integer.parseInt(String.valueOf(idValue));
+                    Employee emp = database.getEmployeeById(id);
+                    if (emp != null) {
+                        populateFormWithEmployee(emp);
+                        tabbedPane.setSelectedIndex(0);
+                        showFormSuccess("Loaded from directory: " + emp.getName());
+                    }
+                } catch (NumberFormatException ignored) {
+                    showFormError("Selected row has invalid employee ID.");
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
